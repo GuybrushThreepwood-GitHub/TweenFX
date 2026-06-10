@@ -59,8 +59,10 @@ static func reset_all(node: CanvasItem) -> void:
 static func stop(node: CanvasItem, anim: TweenFX.Animations) -> void:
 	if not _active.has(node) or not _active[node].has(anim):
 		return
+	var anim_str = str(anim)+"_val"
 	_active[node][anim].kill()
 	_active[node].erase(anim)
+	_active[node].erase(anim_str)
 	if _active[node].is_empty():
 		_active.erase(node)
 
@@ -68,8 +70,37 @@ static func stop_all(node: CanvasItem) -> void:
 	if not _active.has(node):
 		return
 	for tween in _active[node].values():
-		tween.kill()
+		if tween is Tween:
+			tween.kill()
 	_active.erase(node)
+
+static func force_end(node: CanvasItem, anim: TweenFX.Animations) -> void:
+	if not _active.has(node) or not _active[node].has(anim):
+		return
+	var anim_str = str(anim)+"_val"
+	if _active[node][anim].get_loops_left() == -1:
+		#reset(node, anim)
+		_active[node][anim].kill()
+		_active[node].erase(anim)
+		_active[node].erase(anim_str)
+	else:
+		_active[node][anim].pause()
+		_active[node][anim].custom_step(99999.0)
+		
+static func force_end_all(node: CanvasItem) -> void:
+	if not _active.has(node):
+		return
+	for key in _active[node]:
+		if  _active[node][key] is Tween:
+			if _active[node][key].get_loops_left() == -1:
+				#reset(node, key)
+				var anim_str = str(key)+"_val"
+				_active[node][key].kill()
+				_active[node].erase(key)
+				_active[node].erase(anim_str)
+			else:
+				_active[node][key].pause()
+				_active[node][key].custom_step(99999.0)
 
 static func is_playing(node: CanvasItem, anim: TweenFX.Animations) -> bool:
 	return _active.has(node) and _active[node].has(anim)
@@ -77,7 +108,9 @@ static func is_playing(node: CanvasItem, anim: TweenFX.Animations) -> bool:
 static func _on_tween_finished(node: CanvasItem, anim: TweenFX.Animations) -> void:
 	if not _active.has(node):
 		return
+	var anim_str = str(anim)+"_val"
 	_active[node].erase(anim)
+	_active[node].erase(anim_str)
 	if _active[node].is_empty():
 		_active.erase(node)
 

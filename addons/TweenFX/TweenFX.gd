@@ -200,6 +200,14 @@ func stop(node: CanvasItem, anim: Animations) -> void:
 func stop_all(node: CanvasItem) -> void:
 	TweenManager.stop_all(node)
 
+## Tells the animation to go straight to the end
+func force_end(node: CanvasItem, anim: Animations) -> void:
+	TweenManager.force_end(node, anim)
+
+## Tells all animations currently running to go straight to the end
+func force_end_all(node: CanvasItem) -> void:
+	TweenManager.force_end_all(node)
+	
 ## Returns true if the given animation is currently playing on the node.
 func is_playing(node: CanvasItem, anim: Animations) -> bool:
 	return TweenManager.is_playing(node, anim)
