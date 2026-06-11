@@ -92,7 +92,12 @@ enum Animations {
 	PRESS,
 	PRESS_ROTATE,
 	MAGNETIC_PULL,
-	HEADSHAKE
+	HEADSHAKE,
+	
+	SLIDE_IN_LEFT,
+	SLIDE_IN_RIGHT,
+	SLIDE_OUT_LEFT,
+	SLIDE_OUT_RIGHT,
 }
 
 enum AnimationType {
@@ -155,7 +160,11 @@ const ANIMATION_TYPES: Dictionary = {
 	Animations.PRESS_ROTATE: AnimationType.ONE_SHOT,
 	Animations.MAGNETIC_PULL: AnimationType.ONE_SHOT,
 	Animations.HEADSHAKE: AnimationType.ONE_SHOT,
-
+	Animations.SLIDE_IN_LEFT: AnimationType.ONE_SHOT,
+	Animations.SLIDE_IN_RIGHT: AnimationType.ONE_SHOT,
+	Animations.SLIDE_OUT_LEFT: AnimationType.ONE_SHOT,
+	Animations.SLIDE_OUT_RIGHT: AnimationType.ONE_SHOT,
+	
 	Animations.COLOR_CYCLE: AnimationType.LOOPING,
 	Animations.HEARTBEAT: AnimationType.LOOPING,
 	Animations.SWING: AnimationType.LOOPING,
@@ -1129,5 +1138,59 @@ func headshake(node: CanvasItem, duration: float = 0.5, amount: float = 8.0, tim
 	TweenManager.track(node, Animations.HEADSHAKE, tween, {"rotation_degrees": original_rotation})
 	return tween
 	#endregion
+
+## slide from the left into its position.
+func slide_in_left(node: CanvasItem, duration: float = 0.5, slide_distance: float = 100.0, scale_distort: Vector2 = Vector2(1.2, 0.8)) -> Tween:
+	TweenManager.stop(node, Animations.SLIDE_IN_LEFT)
+	var original_pos: Vector2 = node.position
+	var original_scale: Vector2 = node.scale
+	var original_alpha: float = node.modulate.a
+	node.position = original_pos - Vector2(slide_distance, 0)
+	node.scale = scale_distort
+	node.modulate.a = 0.0
+	var tween := node.create_tween()
+	tween.tween_property(node, "position", original_pos, duration).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(node, "scale", original_scale, duration * 0.6).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(node, "modulate:a", original_alpha, duration)
+	TweenManager.track(node, Animations.SLIDE_IN_LEFT, tween, {"position": original_pos, "modulate:a": original_alpha, "scale":original_scale})
+	return tween
+
+## slides to the left and fades out
+func slide_out_left(node: CanvasItem, duration: float = 0.5, slide_distance: float = 100.0) -> Tween:
+	TweenManager.stop(node, Animations.SLIDE_OUT_LEFT)
+	var original_pos: Vector2 = node.position
+	var original_alpha: float = node.modulate.a
+	var tween := node.create_tween()
+	tween.tween_property(node, "position", original_pos - Vector2(slide_distance, 0), duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(node, "modulate:a", 0.0, duration)
+	TweenManager.track(node, Animations.SLIDE_OUT_LEFT, tween, {"position": original_pos, "modulate:a": original_alpha})
+	return tween
+	
+## slide from the right into its position.
+func slide_in_right(node: CanvasItem, duration: float = 0.5, slide_distance: float = 100.0, scale_distort: Vector2 = Vector2(1.2, 0.8)) -> Tween:
+	TweenManager.stop(node, Animations.SLIDE_IN_RIGHT)
+	var original_pos: Vector2 = node.position
+	var original_scale: Vector2 = node.scale
+	var original_alpha: float = node.modulate.a
+	node.position = original_pos + Vector2(slide_distance, 0)
+	node.scale = scale_distort
+	node.modulate.a = 0.0
+	var tween := node.create_tween()
+	tween.tween_property(node, "position", original_pos, duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(node, "scale", original_scale, duration * 0.6).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(node, "modulate:a", original_alpha, duration)
+	TweenManager.track(node, Animations.SLIDE_IN_RIGHT, tween, {"position": original_pos, "modulate:a": original_alpha, "scale":original_scale})
+	return tween
+
+## slides to the right and fades out
+func slide_out_right(node: CanvasItem, duration: float = 0.5, slide_distance: float = 100.0) -> Tween:
+	TweenManager.stop(node, Animations.SLIDE_OUT_RIGHT)
+	var original_pos: Vector2 = node.position
+	var original_alpha: float = node.modulate.a
+	var tween := node.create_tween()
+	tween.tween_property(node, "position", original_pos + Vector2(slide_distance, 0), duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tween.parallel().tween_property(node, "modulate:a", 0.0, duration)
+	TweenManager.track(node, Animations.SLIDE_OUT_RIGHT, tween, {"position": original_pos, "modulate:a": original_alpha})
+	return tween
 
 #endregion
