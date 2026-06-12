@@ -1149,8 +1149,8 @@ func slide_in_left(node: CanvasItem, duration: float = 0.5, slide_distance: floa
 	node.scale = scale_distort
 	node.modulate.a = 0.0
 	var tween := node.create_tween()
-	tween.tween_property(node, "position", original_pos, duration).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
-	tween.parallel().tween_property(node, "scale", original_scale, duration * 0.6).set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(node, "position", original_pos, duration).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.parallel().tween_property(node, "scale", original_scale, duration * 0.6).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	tween.parallel().tween_property(node, "modulate:a", original_alpha, duration)
 	TweenManager.track(node, Animations.SLIDE_IN_LEFT, tween, {"position": original_pos, "modulate:a": original_alpha, "scale":original_scale})
 	return tween
